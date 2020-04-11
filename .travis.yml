@@ -1,0 +1,42 @@
+sudo: required
+language: generic
+services:
+  - docker
+
+before_install:
+  - docker build -t xhlasn/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  #- docker run xhlasn/docker-react npm run test -- --coverage
+  - docker run -e CI=true xhlasn/react-test npm run test
+
+# Build the production images
+after_success:
+  - docker build -t xhlasn/multi-client ./client
+  - docker build -t xhlasn/multi-nginx ./nginx
+  - docker build -t xhlasn/multi-server ./server
+  - docker build -t xhlasn/multi-worker ./worker
+
+# Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+
+# Take those images and push them to docker hub
+  - docker push xhlasn/multi-client
+  - docker push xhlasn/multi-nginx
+  - docker push xhlasn/multi-server
+  - docker push xhlasn/multi-worker
+
+# deploy: # Amazon AWS elastic bean deployemnt
+#   edge: true
+#   provider: elasticbeanstalk
+#   region: 'ap-southeast-2'
+#   app: 'docker-react'
+#   env: 'DockerReact-env'
+#   bucket_name: 'elasticbeanstalk-ap-southeast-2-970835374499'
+#   bucket_path: 'docker-react' # Same as app name, AWS creates a folder after first deployment
+#   on:
+#     branch: master # Only deploy, when the code is changed in the master branch
+
+#   # AWS access keys - defined in travis CI settings
+#   access_key_id: $AWS_ACCESS_KEY
+#   secret_access_key: $AWS_SECRET_KEY
