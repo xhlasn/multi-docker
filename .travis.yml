@@ -26,17 +26,18 @@ after_success:
   - docker push xhlasn/multi-server
   - docker push xhlasn/multi-worker
 
-# deploy: # Amazon AWS elastic bean deployemnt
-#   edge: true
-#   provider: elasticbeanstalk
-#   region: 'ap-southeast-2'
-#   app: 'docker-react'
-#   env: 'DockerReact-env'
-#   bucket_name: 'elasticbeanstalk-ap-southeast-2-970835374499'
-#   bucket_path: 'docker-react' # Same as app name, AWS creates a folder after first deployment
-#   on:
-#     branch: master # Only deploy, when the code is changed in the master branch
+# Amazon AWS elastic bean deployemnt
+deploy: 
+  edge: true
+  provider: elasticbeanstalk
+  region: 'ap-southeast-2'
+  app: 'multi-docker'
+  env: 'MultiDocker-env'
+  bucket_name: 'elasticbeanstalk-ap-southeast-2-970835374499' # from S3
+  bucket_path: 'docker-multi' # Same as app name, AWS creates a folder after first deployment
+  on:
+    branch: master # Only deploy, when the code is changed in the master branch
 
-#   # AWS access keys - defined in travis CI settings
-#   access_key_id: $AWS_ACCESS_KEY
-#   secret_access_key: $AWS_SECRET_KEY
+# AWS access keys - defined in travis CI settings
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
